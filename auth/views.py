@@ -6,6 +6,8 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.settings import api_settings
 from rest_framework import permissions
+from rest_framework import status
+
 
 from . import serializers
 from . import permissions as p
@@ -19,10 +21,10 @@ class CreateUser(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
         return Response({
-            'status': 200,
+            'status': 201,
             'message': 'User successfully created',
             'data': response.data
-        })
+        }, status.HTTP_201_CREATED)
 
 
 # /user

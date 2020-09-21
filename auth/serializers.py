@@ -7,15 +7,15 @@ from rest_framework import serializers
 class UserSerializer(serializers.ModelSerializer):
     """Serializes a user profile object"""
 
-    # def create(self, validated_data):
-    #     """Create and return a new user"""
-    #     user = User.objects.create_user(
-    #         username=validated_data['username'],
-    #         email=validated_data['email'],
-    #         password=validated_data['password']
-    #     )
-    #
-    #     return user
+    def create(self, validated_data):
+        """Create and return a new user"""
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            email=validated_data['email'],
+            password=validated_data['password']
+        )
+
+        return user
 
     # def update(self, instance, validated_data):
     #
@@ -34,6 +34,7 @@ class UserSerializer(serializers.ModelSerializer):
         # fields = '__all__'
         extra_kwargs = {
             'password': {
+                'write_only': True,
                 'style': {'input_type': 'password'}
             }
         }

@@ -1,4 +1,5 @@
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.models import User
 
 from rest_framework import serializers
@@ -41,9 +42,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ChangePasswordSerializer(serializers.Serializer):
-    model = User
-
-    old_password = serializers.CharField(required=True, write_only=True,
-                                         style={'input_type': 'password', 'placeholder': 'Old Password'})
-    new_password = serializers.CharField(required=True, write_only=True,
-                                         style={'input_type': 'password', 'placeholder': 'New Password'})
+    """
+    Serializer for password change endpoint.
+    """
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)

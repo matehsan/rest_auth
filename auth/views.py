@@ -6,8 +6,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.settings import api_settings
 from rest_framework import permissions
-from rest_framework import status
-
+from rest_framework.views import APIView
 
 from . import serializers
 from . import permissions as p
@@ -39,39 +38,33 @@ class UserProfile(generics.ListAPIView):
 
 
 # /user/password
-class PasswordUpdate(generics.UpdateAPIView):
-    model = User
-
+class PasswordUpdate(APIView):
+    """
+    An endpoint for changing password.
+    """
     serializer_class = serializers.ChangePasswordSerializer
     permission_classes = (permissions.IsAuthenticated, p.UpdateOwnProfile)
     authentication_classes = (TokenAuthentication,)
 
     def get_object(self, queryset=None):
-        obj = self.request.user
-        return obj
+        return self.request.user
 
-    def update(self, request, *args, **kwargs):
+    def put(self, request, *args, **kwargs):
         self.object = self.get_object()
-        serializer = self.get_serializer(data=request.data)
+        serializer = serializers.ChangePasswordSerializer(data=request.data)
 
         if serializer.is_valid():
             # Check old password
-            if not self.object.check_password(serializer.data.get("old_password")):
-                return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
+            old_password = serializer.data.get("old_password")
+            if not self.object.check_password(old_password):
+                return Response({"old_password": ["Wrong password."]},
+                                status=status.HTTP_400_BAD_REQUEST)
             # set_password also hashes the password that the user will get
             self.object.set_password(serializer.data.get("new_password"))
             self.object.save()
-            response = {
-                'status': 'success',
-                'code': status.HTTP_200_OK,
-                'message': 'Password updated successfully',
-                'data': []
-            }
-
-            return Response(response)
+            return Response(status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 # /login
 class UserLoginApiView(ObtainAuthToken):

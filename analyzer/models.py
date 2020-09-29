@@ -10,6 +10,7 @@ class ProfileRole(Enum):
     Admin = 5
 
 
+# TODO : az inja faghat analyst sakhte mishe
 profile_role_choices = (
     # (ProfileRole.NoneBotTrader.value, ProfileRole.NoneBotTrader.name),
     (ProfileRole.Trader.value, ProfileRole.Trader.name),
@@ -31,5 +32,7 @@ class Profile(models.Model):
     bot_expected_value = models.CharField(max_length=255, null=True, blank=True)
     bot_future_expected_value = models.CharField(max_length=255, null=True, blank=True)
 
+    def __str__(self):
+        return self.user.username
 
 
